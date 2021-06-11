@@ -4,11 +4,29 @@ from pytz import timezone
 import re
 
 class Funcionario(metaclass=ABCMeta):
-    def __init__(self, nome, cpf, salario):
+    def __init__(self, nome, cpf, salario, telefone):
         self.nome = nome.strip()
         self.cpf = self.sanitiza_cpf(cpf)
         self.valida_cpf()
         self.salario = self.verifica_salario(salario)# salario minimo
+        self._telefone = self.sanitiza_telefone(telefone)
+        self.valida_telefone()
+
+    def sanitiza_telefone(self, telefone):
+        if type(telefone) == str:
+            return telefone
+        else:
+            return str(telefone)
+
+
+    def valida_telefone(self):
+        if not self._telefone:
+            raise ValueError("O telefone está vazio!")
+        padrao_telefone = re.compile('[0-9]{5}[-]?[0-9]{3}')  # tem q colocar parenteses em strings pq
+        match = padrao_telefone.match(
+            self._telefone)  # colchetes significa que é pode ser qualquer UM so elementos nos COLCHETES
+        if not match:
+            raise ValueError("O telefone está ERRADO!")
 
     def verifica_salario(self, salario):
         if type(salario) == float and salario >= 1.100:
@@ -70,8 +88,8 @@ class Funcionario(metaclass=ABCMeta):
         self.salario = novo_salario
 
 class Programador(Funcionario):
-    def __init__(self, nome, cpf, salario, funcao, linguagem):
-        super().__init__(nome, cpf, salario)
+    def __init__(self, nome, cpf, salario, telefone, funcao, linguagem):
+        super().__init__(nome, cpf, salario,telefone)
         self.funcao = funcao
         self.linguagem = linguagem
 
@@ -87,8 +105,8 @@ class Programador(Funcionario):
 
 
 class Gerente(Funcionario):
-    def __init__(self, nome, cpf, salario, departamento):
-        super().__init__(nome, cpf, salario)
+    def __init__(self, nome, cpf, salario, telefone, departamento):
+        super().__init__(nome, cpf, salario,telefone)
         self.departamento = departamento
 
     def __str__(self):
@@ -107,7 +125,7 @@ class Gerente(Funcionario):
 
 
 print("--------------------------------------------")
-matheus = Gerente('Matheus', '123.456.789-12', 16.666, "programacao")
+matheus = Gerente('Matheus', '123.456.789-12', 16.666, '12345-123', "programacao")
 matheus.busca_perguntas_sem_resposta()
 matheus.mostar_salario()
 matheus.mostar_cpf()
@@ -116,7 +134,7 @@ matheus.mostrar_tarefas()
 matheus.salario_novo(20.000)
 matheus.mostar_salario()
 print('-----------------------------')
-roberto = Programador("roberto", "123.457989-45", 1.100, "debugger", "python")
+roberto = Programador("roberto", "123.457989-45", 1.100, '12345123', "debugger", "python")
 roberto.mostar_salario()
 roberto.bater_ponto()
 roberto.mostar_cpf()
