@@ -22,9 +22,8 @@ class Funcionario(metaclass=ABCMeta):
     def valida_telefone(self):
         if not self._telefone:
             raise ValueError("O telefone está vazio!")
-        padrao_telefone = re.compile('[0-9]{5}[-]?[0-9]{3}')  # tem q colocar parenteses em strings pq
-        match = padrao_telefone.match(
-            self._telefone)  # colchetes significa que é pode ser qualquer UM so elementos nos COLCHETES
+        padrao_telefone = re.compile('[0-9]{5}[-]?[0-9]{3}')  # tem q colocar parenteses em strings 
+        match = padrao_telefone.match(self._telefone)  # colchetes significa que é pode ser qualquer UM so elementos nos COLCHETES
         if not match:
             raise ValueError("O telefone está ERRADO!")
 
